@@ -66,7 +66,7 @@ segment code use32 class=code
         push dword [cnt]
         push printFMT
         call [printf]
-        add ESI, 4*2
+        add ESP, 4*2
         ; exit(0)
         push    dword 0      ; push the parameter for exit onto the stack
         call    [exit]       ; call exit to terminate the program
