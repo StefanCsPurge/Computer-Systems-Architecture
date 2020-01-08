@@ -1,4 +1,5 @@
-;22: Se citesc de la tastatura doua numere a si b. Sa se calculeze valoarea expresiei (a+b)*k, k fiind o constanta definita in segmentul de date. Afisati valoarea expresiei (in baza 10).
+;22: Se citesc de la tastatura doua numere a si b. Sa se calculeze valoarea expresiei (a+b)*k, 
+;k fiind o constanta definita in segmentul de date. Afisati valoarea expresiei (in baza 10).
 
 bits 32 ; assembling for the 32 bits architecture
 
