@@ -1,4 +1,7 @@
-;28.Se da un nume de fisier (definit in segmentul de date). Sa se creeze un fisier cu numele dat, apoi sa se citeasca de la tastatura cuvinte pana cand se citeste de la tastatura caracterul '$'. Sa se scrie in fisier doar cuvintele care contin cel putin o litera mica (lowercase).
+;28.Se da un nume de fisier (definit in segmentul de date). 
+;Sa se creeze un fisier cu numele dat, apoi sa se citeasca de la tastatura cuvinte 
+;pana cand se citeste de la tastatura caracterul '$'.
+;Sa se scrie in fisier doar cuvintele care contin cel putin o litera mica (lowercase).
 bits 32
 global start
 extern exit,fopen,fclose,scanf,printf,perror,fprintf
