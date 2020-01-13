@@ -1,7 +1,11 @@
+; LAB 6, 9
+;A list of doublewords is given. Starting from the low part of the doubleword, 
+;obtain the doubleword made of the high even bytes of the low words of each doubleword from the given list.
+;If there are not enough bytes, the remaining bytes of the doubleword will be filled with the byte FFh
+
 bits 32 ; assembling for the 32 bits architecture
 ; declare the EntryPoint (a label defining the very first instruction of the program)
-global start        
-; LAB 6, 9
+global start 
 ; declare external functions needed by our program
 extern exit,printf               ; tell nasm that exit exists even if we won't be defining it
 import exit msvcrt.dll    ; exit is a function that ends the calling process. It is defined in msvcrt.dll
@@ -42,7 +46,7 @@ segment code use32 class=code
         jmp repeat2
         
         theEnd:
-        ;print d in decimal
+        ;print d in hexa
         push dword [d]
         push fmt
         call [printf]
