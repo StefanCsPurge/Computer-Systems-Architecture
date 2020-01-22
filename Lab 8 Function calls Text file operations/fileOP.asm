@@ -1,4 +1,6 @@
-;Se da un fisier text. Sa se citeasca continutul fisierului, sa se contorizeze numarul de cifre impare si sa se afiseze aceasta valoare. Numele fisierului text este definit in segmentul de date. 
+;Se da un fisier text. Sa se citeasca continutul fisierului, 
+;sa se contorizeze numarul de cifre impare si sa se afiseze aceasta valoare. 
+;Numele fisierului text este definit in segmentul de date. 
 
 bits 32 ; assembling for the 32 bits architecture
 
