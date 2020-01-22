@@ -1,0 +1,1 @@
+D: 1, H: 1, no of 1 bits: 1

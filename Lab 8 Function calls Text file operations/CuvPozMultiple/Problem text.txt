@@ -1,0 +1,4 @@
+Se cit de la tastatura numele unui fisier si un nr.
+In fisier sunt cuvinte separate printr-un spatiu.
+Sa se printeze pe ecran cuvintele din fisier care se afla pe pozitii care
+sunt multiplii de numarul citit.

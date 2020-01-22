@@ -1,0 +1,2 @@
+Se citeste un text dintr-un fisier un text.
+Sa se scrie la consola caracterul special de frecventa maxima.
