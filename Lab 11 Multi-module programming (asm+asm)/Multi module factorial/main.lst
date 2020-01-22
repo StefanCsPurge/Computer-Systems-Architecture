@@ -1,0 +1,58 @@
+     1                                  bits 32 ; assembling for the 32 bits architecture
+     2                                  
+     3                                  ; declare the EntryPoint (a label defining the very first instruction of the program)
+     4                                  global start        
+     5                                  
+     6                                  ; declare external functions needed by our program
+     7                                  extern exit,printf,scanf               ; tell nasm that exit exists even if we won't be defining it
+     8                                  import exit msvcrt.dll    ; exit is a function that ends the calling process. It is defined in msvcrt.dll
+     9                                                            ; msvcrt.dll contains exit, printf and all the other important C-runtime specific functions
+    10                                  import printf msvcrt.dll
+    11                                  import scanf msvcrt.dll
+    12                                  ; our data is declared here (the variables needed by our program)
+    13                                  %include "fact.asm" 
+     1                              <1> %ifndef _FACT_ASM_
+     2                              <1> %define _FACT_ASM_
+     3                              <1> 
+     4                              <1> factorial:
+     5 00000000 B801000000          <1>     mov EAX, 1
+     6 00000005 8B4C2404            <1>     mov ECX, [ESP+4]
+     7                              <1>     .r:
+     8 00000009 F7E1                <1>         mul ECX ; EDX:EAX = ECX * EAX, dar presupunem ca rezultatul incape in EAX, deci il luam numa pe asta
+     9 0000000B E2FC                <1>     loop .r ; ECX-- , jmp to .r
+    10 0000000D C3                  <1>     ret
+    11                              <1> 
+    12                              <1> %endif
+    14                                  segment data use32 class=data
+    15 0000000E <res 00000004>              n resd 1
+    16 00000012 6E3D00                      pFmt db "n=",0
+    17 00000015 256400                      rFmt db "%d",0
+    18 00000018 666163746F7269616C-         f db "factorial is %d",0
+    18 00000021 20697320256400     
+    19                                  
+    20                                  ; our code starts here
+    21                                  segment code use32 class=code
+    22                                      start:
+    23 00000000 68[12000000]                    push dword pFmt
+    24 00000005 FF15[00000000]                  call [printf]
+    25 0000000B 83C404                          add ESP, 4*1
+    26                                          
+    27                                          ;scanf("%d",n)
+    28 0000000E 68[0E000000]                    push n
+    29 00000013 68[15000000]                    push rFmt
+    30 00000018 FF15[00000000]                  call [scanf]
+    31 0000001E 83C408                          add ESP, 4*2
+    32                                          
+    33 00000021 FF35[0E000000]                  push dword[n]
+    34 00000027 E8(00000000)                    call factorial
+    35 0000002C 83C404                          add esp,4*1
+    36 0000002F 50                              push EAX
+    37 00000030 68[18000000]                    push f
+    38 00000035 FF15[00000000]                  call [printf]
+    39 0000003B 83C408                          add ESP, 4*2
+    40                                          
+    41 0000003E EBFE                            jmp $ ;loop infinit ca sa ramana fereastra deschisa
+    42                                          ; exit(0)
+    43 00000040 6A00                            push    dword 0      ; push the parameter for exit onto the stack
+    44 00000042 FF15[00000000]                  call    [exit]       ; call exit to terminate the program
+    45                                          
