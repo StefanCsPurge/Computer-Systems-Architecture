@@ -54,7 +54,7 @@ segment code use32 class=code
         mov EBX,0   ;contor
         mov EAX,[cif]
         .count1:
-        SAR EAX,1
+        SHR EAX,1
         ADC EBX,0
         cmp EAX,0
         je print
