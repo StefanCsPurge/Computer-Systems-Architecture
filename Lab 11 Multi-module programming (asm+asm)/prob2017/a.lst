@@ -1,0 +1,37 @@
+     1                                  bits 32
+     2                                  global start        
+     3                                  extern exit,printf,longestSeq           
+     4                                  import exit msvcrt.dll
+     5                                  import printf msvcrt.dll
+     6                                  
+     7                                  
+     8                                  segment data use32 class=data
+     9 00000000 010101020000050A08-             s db 1,1,1,2,0,0,5,10,8,9,2,0,3,11,14,9,9,0
+     9 00000009 090200030B0E090900 
+    10                                          lenS equ $-s
+    11 00000012 25642000                        pf db "%d ",0
+    12                                  
+    13                                  segment code use32 class=code
+    14                                      start:
+    15 00000000 68[00000000]                    push s
+    16 00000005 6A12                            push lenS
+    17 00000007 E8(00000000)                    call longestSeq
+    18 0000000C 83C408                          add ESP,4*2
+    19                                          
+    20 0000000F 89C6                            mov ESI,EAX
+    21                                          
+    22                                          printLoop:
+    23 00000011 AC                              LODSB
+    24 00000012 3C00                            cmp AL,0
+    25 00000014 7414                            je theEnd
+    26 00000016 0FB6C0                          movzx EAX,AL
+    27 00000019 50                              push EAX
+    28 0000001A 68[12000000]                    push pf
+    29 0000001F FF15[00000000]                  call [printf]
+    30 00000025 83C408                          add ESP,4*2
+    31 00000028 EBE7                            jmp printLoop
+    32                                          
+    33                                          theEnd:
+    34                                          ; exit(0)
+    35 0000002A 6A00                            push    dword 0     
+    36 0000002C FF15[00000000]                  call    [exit]      

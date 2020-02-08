@@ -1,0 +1,38 @@
+     1                                  bits 32
+     2                                  extern r
+     3                                  global longestOddSeq
+     4                                  
+     5                                  segment data use32 class=data
+     6 00000000 00000000                    max dd 0 ;local variable, max len
+     7                                  
+     8                                  segment code use32 class=code
+     9                                  longestOddSeq:
+    10                                      
+    11 00000000 8B742408                    mov ESI,[ESP+8] ;offset of s
+    12 00000004 8B4C2404                    mov ECX,[ESP+4] ;lenS
+    13 00000008 BB00000000                  mov EBX,0 ; counter
+    14 0000000D 89F2                        mov EDX,ESI ; sequence start
+    15 0000000F FC                          CLD
+    16                                      
+    17                                      theFor:
+    18 00000010 AC                              LODSB
+    19 00000011 A801                            test AL,1 ; test parity
+    20 00000013 7517                            jnz count; the AND is 0 if we had an even no
+    21 00000015 3B1D[00000000]                  cmp EBX,[max]
+    22 0000001B 7E08                            jle noMax
+    23 0000001D 891D[00000000]                  mov [max],EBX
+    24 00000023 89D7                            mov EDI,EDX ; put in EDI the offset of the max sequence
+    25                                          noMax:
+    26 00000025 BBFFFFFFFF                      mov EBX,-1
+    27 0000002A 89F2                            mov EDX,ESI
+    28                                          count:
+    29 0000002C 43                              inc EBX
+    30 0000002D E2E1                        loop theFor
+    31                                      
+    32 0000002F 89FE                        mov ESI,EDI ; ESI:=offset of the seq found in s
+    33 00000031 BF[00000000]                mov EDI,r ; now we add this max seq to r
+    34 00000036 8B0D[00000000]              mov ECX,[max]
+    35 0000003C F3A4                        rep MOVSB ;byte EDI := byte ESI , ESI++ EDI++
+    36                                      
+    37 0000003E A1[00000000]                mov EAX,[max] ; EAX:=the max len
+    38 00000043 C3                          ret

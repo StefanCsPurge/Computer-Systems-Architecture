@@ -1,0 +1,41 @@
+     1                                  bits 32
+     2                                  extern r
+     3                                  global maxBytes
+     4                                  
+     5                                  segment data use32 class=data
+     6 00000000 <res 00000001>              max resb 1 ; used to calculate the max byte
+     7 00000001 <res 00000001>              maxr resb 1 ; local variable used by the function
+     8                                  
+     9                                  segment code use32 class=code
+    10                                      maxBytes:
+    11 00000000 8B742404                    mov ESI, [ESP+4] ; s parameter
+    12 00000004 8B4C2408                    mov ECX, [ESP+8] ; lenS parameter
+    13 00000008 BB00000000                  mov EBX,0 ;initialize sum 
+    14 0000000D BF[00000000]                mov EDI,r ;string from a.asm that will store the max bytes ranks
+    15 00000012 FC                          CLD
+    16                                      
+    17                                      parseS:
+    18 00000013 51                              push ECX ; save ECX cuz we gonna need it l8r
+    19 00000014 AD                              LODSD ; put in EAX the current dword
+    20 00000015 B104                            mov CL,4 ; this will be our byte index
+    21 00000017 C605[00000000]00                mov byte[max],0 ; initialize max byte
+    22                                          findMax:
+    23 0000001E 3A05[00000000]                      cmp AL,[max] ;start with the lowest byte
+    24 00000024 760B                                jbe next
+    25 00000026 A2[00000000]                        mov [max],AL
+    26 0000002B 880D[01000000]                      mov [maxr],CL ; save the rank from CL
+    27                                              next:
+    28 00000031 C1E804                              shr EAX,4
+    29 00000034 FEC9                                dec CL
+    30 00000036 80F900                              cmp CL,0 ; check if we interated over all the 4 bytes of the dword
+    31 00000039 77E3                                ja findMax
+    32                                          
+    33 0000003B A0[01000000]                    mov AL,[maxr] ;copy in AL the rank of the max byte
+    34 00000040 AA                              STOSB ; store the rank in r
+    35 00000041 0FBE05[00000000]                movsx EAX,byte[max] ; in [max] we have the max byte
+    36 00000048 01C3                            add EBX,EAX ; add the signed byte to the sum
+    37 0000004A 59                              pop ECX  ; restore the saved ECX
+    38 0000004B E2C6                        loop parseS
+    39                                      
+    40 0000004D 89D8                        mov EAX,EBX ; ret the signed sum in EAX
+    41 0000004F C3                          ret

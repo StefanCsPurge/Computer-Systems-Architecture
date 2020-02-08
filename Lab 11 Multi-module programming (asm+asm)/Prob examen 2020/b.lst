@@ -1,0 +1,45 @@
+     1                                  bits 32
+     2                                  global buildSF
+     3                                  extern printf
+     4                                  import printf msvcrt.dll
+     5                                  
+     6                                  segment data use32 class=data
+     7 00000000 <res 00000004>              d resd 1
+     8 00000004 <res 00000004>              a resd 1
+     9                                  segment code use32 class=code
+    10                                      buildSF:
+    11 00000000 8B742404                    mov ESI,[ESP+4]
+    12 00000004 8B7C2408                    mov EDI,[ESP+8]
+    13 00000008 8B4C240C                    mov ECX,[ESP+12]
+    14 0000000C 8B5C2410                    mov EBX,[ESP+16]
+    15 00000010 891D[04000000]              mov dword[a],EBX ; saved the address of the lenSF 
+    16                                      
+    17                                      parseSIs:
+    18 00000016 51                              push ECX
+    19 00000017 AD                              LODSD
+    20 00000018 A3[00000000]                    mov [d],EAX
+    21 0000001D B300                            mov BL,0
+    22 0000001F B904000000                      mov ECX,4
+    23                                          countHpairs:
+    24 00000024 0401                                add AL,1
+    25 00000026 88C2                                mov DL,AL
+    26 00000028 80E20F                              AND DL,0Fh
+    27 0000002B C0E804                              shr AL,4
+    28 0000002E 38D0                                cmp AL,DL
+    29 00000030 7502                                jne nextByte
+    30 00000032 FEC3                                inc BL
+    31                                              nextByte:
+    32 00000034 C1E808                              shr EAX,8
+    33 00000037 E2EB                                loop countHpairs
+    34 00000039 80FB02                          cmp BL,2
+    35 0000003C 720E                            jb next
+    36 0000003E A1[00000000]                    mov EAX,[d]
+    37 00000043 AB                              STOSD
+    38 00000044 8B1D[04000000]                  mov EBX,[a]
+    39 0000004A FF03                            inc dword[EBX]
+    40                                          next:
+    41 0000004C 59                              pop ECX
+    42 0000004D E2C7                            loop parseSIs
+    43                                          
+    44                                          
+    45 0000004F C3                          ret

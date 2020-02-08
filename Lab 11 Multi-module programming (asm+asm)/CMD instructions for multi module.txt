@@ -1,0 +1,17 @@
+Needed files:
+nasm.exe
+alink.exe
+ollydbg.exe
+
+The instructions to compile the multi-module program:
+
+nasm -fobj a.asm ; here we create the sources
+nasm -fobj b.asm
+
+;acum le punem impreuna
+alink a.obj b.obj -oPE -subsys console -entry start
+                        ; these are the parameters
+
+=>  exe file created from all obj files / sources created above
+
+# visual studio community for ASM + C

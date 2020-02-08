@@ -1,0 +1,51 @@
+     1                                  ;A string if dwords is given in SI. Construct a new string of dwords SF
+     2                                  ;that contains the dwords from SI that have at least 2 descending hexa pairs in them.
+     3                                  ;Descending hexa pair: FE, 21, DC etc
+     4                                  bits 32
+     5                                  global start
+     6                                  extern exit,printf,buildSF
+     7                                  import exit msvcrt.dll
+     8                                  import printf msvcrt.dll
+     9                                  
+    10                                  segment data use32 class=data
+    11 00000000 34FE0F0211110000CB-         SIs dd 20FFE34h,1111h,0DCBh,0F120h
+    11 00000009 0D000020F10000     
+    12                                      lenSI equ ($-SIs)/4
+    13 00000010 <res 00000010>              SF resd lenSI
+    14 00000020 00000000                    lenSF dd 0
+    15 00000024 25582000                    pf db "%X ",0
+    16 00000028 25640A00                    pf2 db "%d",10,0
+    17                                  
+    18                                  segment code use32 class=code
+    19                                      start:
+    20                                      ;buildSF(SIs,SF,lenSI,lenSF)
+    21 00000000 68[20000000]                push lenSF
+    22 00000005 6A04                        push lenSI
+    23 00000007 68[10000000]                push SF
+    24 0000000C 68[00000000]                push SIs
+    25 00000011 E8(00000000)                call buildSF
+    26 00000016 83C410                      add ESP,4*4
+    27                                      
+    28 00000019 BE[10000000]                mov ESI,SF
+    29 0000001E 8B0D[20000000]              mov ECX,[lenSF]
+    30 00000024 51                          push ECX
+    31 00000025 68[28000000]                push pf2
+    32 0000002A FF15[00000000]              call [printf]
+    33 00000030 83C408                      add ESP,4*2
+    34                                      
+    35 00000033 8B0D[20000000]              mov ECX,[lenSF]
+    36 00000039 E314                        JECXZ theEnd
+    37                                      
+    38                                      printLoop:
+    39 0000003B 51                          push ECX
+    40 0000003C AD                          LODSD
+    41 0000003D 50                          push EAX
+    42 0000003E 68[24000000]                push pf
+    43 00000043 FF15[00000000]              call [printf]
+    44 00000049 83C408                      add ESP,4*2
+    45 0000004C 59                          pop ECX
+    46 0000004D E2EC                        loop printLoop
+    47                                      
+    48                                      theEnd:
+    49 0000004F 6A00                        push dword 0
+    50 00000051 FF15[00000000]              call [exit]

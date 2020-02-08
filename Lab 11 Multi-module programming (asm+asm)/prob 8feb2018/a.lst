@@ -1,0 +1,70 @@
+     1                                  bits 32
+     2                                  global start,r
+     3                                  extern exit,printf,maxBytes
+     4                                  import exit msvcrt.dll
+     5                                  import printf msvcrt.dll
+     6                                  
+     7                                  segment data use32 class=data
+     8 00000000 78A63412785634127D-         s dd 1234A678h,12345678h,1AC3B47Dh,0FEDC9876h
+     8 00000009 B4C31A7698DCFE     
+     9                                      lenS equ ($-s)/4
+    10 00000010 00<rept>                    r times lenS db 0
+    11 00000014 <res 00000004>              d resd 1
+    12 00000018 <res 00000004>              sum resd 1
+    13 0000001C 2558682000                  pf db "%Xh ",0
+    14 00000021 0A5468652028736967-         pf2 db `\nThe (signed) sum of these bytes is %d\n`,0
+    14 0000002A 6E6564292073756D20-
+    14 00000033 6F6620746865736520-
+    14 0000003C 627974657320697320-
+    14 00000045 25640A00           
+    15                                  
+    16                                  segment code use32 class=code
+    17                                  start:
+    18                                      ;maxBytes(s,lenS)
+    19 00000000 6A04                        push lenS
+    20 00000002 68[00000000]                push s
+    21 00000007 E8(00000000)                call maxBytes
+    22 0000000C 83C408                      add ESP,4*2
+    23                                      ;this will return in eax the sum of the max bytes
+    24 0000000F A3[18000000]                mov [sum],EAX
+    25                                      
+    26 00000014 FC                          CLD
+    27 00000015 BE[00000000]                mov ESI,s
+    28 0000001A BF00000000                  mov EDI,0
+    29                                      ; now print these bytes using the damn string of byte ranks 
+    30                                      ; that was built using the function from b.asm
+    31                                      printBytes:
+    32 0000001F AD                              LODSD ; EAX = [ESI] , ESI+=4
+    33 00000020 B100                            mov CL,0
+    34 00000022 B304                            mov BL,4
+    35 00000024 2A9F[10000000]                  sub BL,[r+EDI]
+    36 0000002A 00D9<rept>                      times 8 add CL,BL ; BL*8 :)))
+    37 0000003A D3E8                            shr EAX,CL
+    38                                          
+    39                                          ;mov [d],EAX ; put in [d] the current dword
+    40                                          ;mov EBX,d ; put its offset in EBX to use the amazing XLAT
+    41                                          ;mov AL,4       ; because of little endian
+    42                                          ;sub AL,[r+EDI] ; now we get the good position
+    43                                          ;XLAT ; AL := [d+AL]
+    44 0000003C 0FB6C0                          movzx EAX,AL
+    45                                          
+    46                                          ;now print the byte extracted from the current dword
+    47 0000003F 50                              push EAX
+    48 00000040 68[1C000000]                    push pf
+    49 00000045 FF15[00000000]                  call [printf]
+    50 0000004B 83C408                          add ESP,4*2
+    51                                          
+    52 0000004E 47                              inc EDI
+    53 0000004F 83FF04                          cmp EDI,lenS
+    54 00000052 72CB                            jb printBytes
+    55                                      
+    56                                      ;print(pf,sum)
+    57 00000054 FF35[18000000]              push dword[sum]
+    58 0000005A 68[21000000]                push pf2
+    59 0000005F FF15[00000000]              call [printf]
+    60 00000065 83C408                      add ESP,4*2
+    61                                      
+    62 00000068 EBFE                        jmp $ ; keeps your compiled exe open
+    63 0000006A 6A00                        push dword 0
+    64 0000006C FF15[00000000]              call [exit]
+    65                                      
