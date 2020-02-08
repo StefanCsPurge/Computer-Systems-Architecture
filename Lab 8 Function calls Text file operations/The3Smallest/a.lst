@@ -1,0 +1,65 @@
+     1                                  bits 32
+     2                                  global start
+     3                                  extern exit,printf
+     4                                  import exit msvcrt.dll
+     5                                  import printf msvcrt.dll
+     6                                  
+     7                                  ;find the smallest 3 numbers
+     8                                  segment data use32 class=data
+     9 00000000 0B00000016000000A4-         s dd 11,22,420,12,69,9999,1,45
+     9 00000009 0100000C0000004500-
+     9 00000012 00000F270000010000-
+     9 0000001B 002D000000         
+    10                                      lenS equ ($-s)/4
+    11 00000020 FFFFFF7F                    min dd 7FFFFFFFh ; max signed
+    12 00000024 FFFFFF7F                    min2 dd 7FFFFFFFh
+    13 00000028 FFFFFF7F                    min3 dd 7FFFFFFFh
+    14 0000002C 54686520746F702033-         pf db "The top 3 min numbers are: %d %d %d",0
+    14 00000035 206D696E206E756D62-
+    14 0000003E 657273206172653A20-
+    14 00000047 256420256420256400 
+    15                                      
+    16                                  segment code use32 class=code
+    17                                      start:
+    18 00000000 BE[00000000]                mov ESI,s
+    19                                     ; min2
+    20                                      
+    21 00000005 B908000000                  mov ECX,lenS
+    22                                      forLoop:
+    23 0000000A AD                              LODSD
+    24                                          
+    25 0000000B 3B05[20000000]                  cmp EAX,[min]
+    26 00000011 7D1F                            jge min_2
+    27 00000013 8B1D[24000000]                  mov EBX,[min2]
+    28 00000019 891D[28000000]                  mov [min3],EBX   ; min3 = min2
+    29 0000001F 8B1D[20000000]                  mov EBX,[min] ; min2 = min1
+    30 00000025 891D[24000000]                  mov [min2],EBX
+    31 0000002B A3[20000000]                    mov [min],EAX ; min1 = EAX
+    32 00000030 EB28                            jmp endCmp
+    33                                         
+    34                                          min_2:
+    35 00000032 3B05[24000000]                  cmp EAX,[min2]
+    36 00000038 7D13                            jge min_3
+    37 0000003A 8B1D[24000000]                  mov EBX,[min2]
+    38 00000040 891D[28000000]                  mov [min3],EBX ; min3 = min2
+    39 00000046 A3[24000000]                    mov [min2],EAX ; min2 = EAX
+    40 0000004B EB0D                            jmp endCmp
+    41                                          
+    42                                          min_3:
+    43 0000004D 3B05[28000000]                  cmp EAX,[min3]
+    44 00000053 7D05                            jge endCmp
+    45 00000055 A3[28000000]                    mov [min3],EAX ; min3 = EAX
+    46                                          
+    47                                          endCmp:
+    48 0000005A E2AE                        loop forLoop
+    49                                      
+    50 0000005C FF35[28000000]              push dword[min3]
+    51 00000062 53                          push EBX
+    52 00000063 FF35[20000000]              push dword[min]
+    53 00000069 68[2C000000]                push pf
+    54 0000006E FF15[00000000]              call [printf]
+    55 00000074 83C410                      add ESP,4*4
+    56                                      
+    57 00000077 6A00                        push dword 0
+    58 00000079 FF15[00000000]              call [exit]
+    59 0000007F 83C404                      add ESP,4
